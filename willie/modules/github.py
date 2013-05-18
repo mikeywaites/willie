@@ -51,7 +51,7 @@ def issue(willie, trigger):
         raw = web.post('https://api.github.com/repos/'+gitAPI[1]+'/issues?access_token='+gitAPI[0], json.dumps(data))
     except HTTPError:
         return willie.say('The GitHub API returned an error.')
-    
+
     data = json.loads(raw)
     willie.say('Issue #%s posted. %s' % (data['number'], data['html_url']))
     willie.debug('GitHub','Issue #%s created in %s' % (data['number'],trigger.sender),'warning')
@@ -78,11 +78,11 @@ def findIssue(willie, trigger):
     else:
         URL = 'https://api.github.com/legacy/issues/search/%s/open/%s' % (gitAPI[1], trigger.group(2))
 
+    URL = '%s?access_token=%s' % (URL, gitAPI[0])
     try:
         raw = web.get(URL)
     except HTTPError:
         return willie.say('The GitHub API returned an error.')
-
     try:
         if firstParam.isdigit():
             data = json.loads(raw)
@@ -96,6 +96,7 @@ def findIssue(willie, trigger):
         body = data['body'].split('\n')[0]
     willie.reply('[#%s]\x02title:\x02 %s \x02|\x02 %s' % (data['number'],data['title'],body))
     willie.say(data['html_url'])
+
 findIssue.commands = ['findissue','findbug']
 findIssue.priority = 'medium'
 
